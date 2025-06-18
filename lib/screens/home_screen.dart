@@ -1,8 +1,13 @@
-
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'dart:io';
+import '../widgets/button.dart';
+import '../widgets/input.dart';
+import '../controller.dart';
+import '../services/api_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,26 +17,33 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String? _token;
-
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin();
+  final MainController controller = Get.find<MainController>();
+  final ApiService apiService = ApiService();
+  final TextEditingController saidController = TextEditingController();
+  final TextEditingController fcmTokenController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _initFCM();
+    _setupFCMForegroundListener();
+
+    // FCM 토큰 초기화 및 변경 시 업데이트
+    fcmTokenController.text = controller.fcmToken.value;
+    ever(controller.fcmToken, (token) {
+      fcmTokenController.text = token;
+    });
   }
 
-  Future<void> _initFCM() async {
-    final messaging = FirebaseMessaging.instance;
+  @override
+  void dispose() {
+    saidController.dispose();
+    fcmTokenController.dispose();
+    super.dispose();
+  }
 
-    await messaging.requestPermission();
-
-    final token = await messaging.getToken();
-    setState(() => _token = token);
-    print("FCM Token: $token");
-
+  void _setupFCMForegroundListener() {
     FirebaseMessaging.onMessage.listen((message) {
       final title = message.notification?.title ?? message.data['title'];
       final body = message.notification?.body ?? message.data['body'];
@@ -52,27 +64,57 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       }
-
-      // 토스트도 보여주고 싶으면 아래 주석 해제
-      // Fluttertoast.showToast(
-      //   msg: "${title ?? ''}\n${body ?? ''}".trim(),
-      //   toastLength: Toast.LENGTH_LONG,
-      //   gravity: ToastGravity.BOTTOM,
-      // );
     });
+  }
+
+  void _sendToken() async {
+    final said = saidController.text.trim();
+
+    if (controller.fcmToken.isNotEmpty && said.isNotEmpty) {
+      await apiService.sendToken(said: said);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Token sent to server')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('FCM Token 또는 SAID가 비어있습니다')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('FCM 알림 테스트')),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            _token != null ? 'FCM Token:\n$_token' : '토큰 가져오는 중...',
-            textAlign: TextAlign.center,
-          ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Input(
+              controller: saidController,
+              hint: 'SAID 입력',
+              inputType: TextInputType.number,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'SAID를 입력하세요';
+                }
+                if (!RegExp(r'^\d{11}$').hasMatch(value)) {
+                  return '정확히 11자리 숫자를 입력하세요';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            Input(
+              controller: fcmTokenController,
+              hint: 'FCM Token',
+              readonly: true,
+            ),
+            const SizedBox(height: 20),
+            Button(onPressed: _sendToken, text: 'send'),
+          ],
         ),
       ),
     );

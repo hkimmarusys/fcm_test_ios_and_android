@@ -8,6 +8,7 @@ import '../widgets/button.dart';
 import '../widgets/input.dart';
 import '../controller.dart';
 import '../services/api_service.dart';
+import '../widgets/input_label.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -92,21 +93,13 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            const InputLabel(name: 'SAID'),
             Input(
               controller: saidController,
               hint: 'SAID 입력',
-              inputType: TextInputType.number,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'SAID를 입력하세요';
-                }
-                if (!RegExp(r'^\d{11}$').hasMatch(value)) {
-                  return '정확히 11자리 숫자를 입력하세요';
-                }
-                return null;
-              },
             ),
             const SizedBox(height: 16),
+            const InputLabel(name: 'FCM Token'),
             Input(
               controller: fcmTokenController,
               hint: 'FCM Token',

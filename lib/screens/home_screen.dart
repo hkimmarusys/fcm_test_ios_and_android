@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import '../widgets/button.dart';
 import '../widgets/input.dart';
@@ -85,6 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,6 +109,48 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 20),
             Button(onPressed: _sendToken, text: 'send'),
+            const SizedBox(height: 30),
+            Text(
+              'SAID / Token',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 10),
+            FutureBuilder(
+              future: apiService.getTokenHistory(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+
+                final data = snapshot.data;
+                if (data == null || data.isEmpty) {
+                  return const Text('저장된 이력이 없습니다.');
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    final entry = data[index];
+                    return Card(
+                      elevation: 2,
+                      margin: const EdgeInsets.symmetric(vertical: 6),
+                      child: ListTile(
+                        title: Text('SAID: ${entry['said']}'),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Token: ${entry['token']}'),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+
           ],
         ),
       ),

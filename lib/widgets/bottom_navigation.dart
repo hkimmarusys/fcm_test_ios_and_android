@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../controller.dart';
+import 'package:fcm_ios_and_android/controller.dart';
 import 'package:get/get.dart';
 
 class BottomNavigation extends StatelessWidget {

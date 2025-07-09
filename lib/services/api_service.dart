@@ -5,13 +5,32 @@ import 'package:dio/dio.dart' as dio_pkg;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../controller.dart';
+import 'package:fcm_ios_and_android/controller.dart';
 
 class ApiService {
   final MainController controller = Get.find<MainController>();
   final Uri baseUrl = Uri.parse('https://demo.marusys.com/brcm/1111');
 
   static const _key = 'token_history';
+
+
+
+  Future<void> receiveNotification({required String said}) async {
+    try {
+      final response = await http.get(
+        baseUrl,
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        print('receive notification: ${response.body}');
+      } else {
+        print('failed to receive notification: ${response.body}');
+      }
+    }catch (e) {
+      print('Error: $e');
+    }
+  }
 
   Future<void> sendToken({ required String said }) async {
     final prefs = await SharedPreferences.getInstance();

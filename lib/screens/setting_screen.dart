@@ -5,12 +5,12 @@ import 'package:get/get.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
-import '../widgets/button.dart';
-import '../widgets/input.dart';
-import '../controller.dart';
-import '../services/api_service.dart';
-import '../widgets/input_label.dart';
-import '../widgets/bottom_navigation.dart';
+import 'package:fcm_ios_and_android/widgets/button.dart';
+import 'package:fcm_ios_and_android/widgets/input.dart';
+import 'package:fcm_ios_and_android/controller.dart';
+import 'package:fcm_ios_and_android/services/api_service.dart';
+import 'package:fcm_ios_and_android/widgets/input_label.dart';
+import 'package:fcm_ios_and_android/widgets/bottom_navigation.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});

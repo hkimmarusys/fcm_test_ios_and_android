@@ -12,14 +12,14 @@ import '../services/api_service.dart';
 import '../widgets/input_label.dart';
 import '../widgets/bottom_navigation.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class StatisticScreen extends StatefulWidget {
+  const StatisticScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<StatisticScreen> createState() => _StatisticScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _StatisticScreenState extends State<StatisticScreen> {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   FlutterLocalNotificationsPlugin();
   final MainController controller = Get.find<MainController>();
@@ -31,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(title: const Text('AI 알림')),
       body: const Center(
         child: Text(
-          'Home Screen',
+          'Statistic Screen',
           style: TextStyle(fontSize: 20),
         ),
       ),

@@ -4,10 +4,13 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'firebase_options.dart';
 import 'screens/home_screen.dart';
+import 'screens/setting_screen.dart';
+import 'screens/statistic_screen.dart';
 import 'controller.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'dart:io';
+
 
 // FlutterLocalNotificationsPlugin 인스턴스
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -66,8 +69,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'FCM Notification Demo',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const HomeScreen(),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.white,
+      ),
+      initialRoute: '/home',
+      getPages: [
+        GetPage(name: '/home', page: () => const HomeScreen()),
+        GetPage(name: '/setting', page: () => const SettingScreen()),
+        GetPage(name: '/statistic', page: () => const StatisticScreen()),
+      ],
     );
   }
 }

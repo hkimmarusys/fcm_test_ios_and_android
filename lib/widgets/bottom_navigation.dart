@@ -30,17 +30,17 @@ class BottomNavigation extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Icon(
+            Icons.search,
+            size: 25,
+          ),
+          label: "search",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(
             Icons.settings,
             size: 25,
           ),
           label: "setting",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(
-            Icons.search,
-            size: 25,
-          ),
-          label: "statistic",
         ),
       ],
     );

@@ -76,8 +76,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/home',
       getPages: [
         GetPage(name: '/home', page: () => const HomeScreen()),
+        GetPage(name: '/search', page: () => const SearchScreen()),
         GetPage(name: '/setting', page: () => const SettingScreen()),
-        GetPage(name: '/statistic', page: () => const StatisticScreen()),
       ],
     );
   }

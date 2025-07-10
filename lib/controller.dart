@@ -16,13 +16,13 @@ class MainController extends GetxController {
           break;
         }
       case 1:
-        if (Get.currentRoute != '/setting') {
-          Get.offAllNamed('/setting');
+        if (Get.currentRoute != '/search') {
+          Get.offAllNamed('/search');
           break;
         }
       case 2:
-        if (Get.currentRoute != '/statistic') {
-          Get.offAllNamed('/statistic');
+        if (Get.currentRoute != '/setting') {
+          Get.offAllNamed('/setting');
           break;
         }
     }

@@ -1,15 +1,12 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:dio/dio.dart' as dio_pkg;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fcm_ios_and_android/controller.dart';
 
 class ApiService {
   final MainController controller = Get.find<MainController>();
-  final Uri baseUrl = Uri.parse('https://demo.marusys.com/brcm/1111');
+  final Uri baseUrl = Uri.parse('https://demo.marusys.com/brcm/');
 
   static const _key = 'token_history';
 

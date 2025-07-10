@@ -1,25 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
-import 'package:fcm_ios_and_android/widgets/button.dart';
-import 'package:fcm_ios_and_android/widgets/input.dart';
 import 'package:fcm_ios_and_android/controller.dart';
 import 'package:fcm_ios_and_android/services/api_service.dart';
-import 'package:fcm_ios_and_android/widgets/input_label.dart';
 import 'package:fcm_ios_and_android/widgets/bottom_navigation.dart';
 
-class StatisticScreen extends StatefulWidget {
-  const StatisticScreen({super.key});
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
 
   @override
-  State<StatisticScreen> createState() => _StatisticScreenState();
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _StatisticScreenState extends State<StatisticScreen> {
+class _SearchScreenState extends State<SearchScreen> {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   FlutterLocalNotificationsPlugin();
   final MainController controller = Get.find<MainController>();
@@ -31,7 +24,7 @@ class _StatisticScreenState extends State<StatisticScreen> {
       appBar: AppBar(title: const Text('AI 알림')),
       body: const Center(
         child: Text(
-          'Statistic Screen',
+          'Search Screen',
           style: TextStyle(fontSize: 20),
         ),
       ),

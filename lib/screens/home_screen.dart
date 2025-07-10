@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
-import 'package:fcm_ios_and_android/widgets/button.dart';
-import 'package:fcm_ios_and_android/widgets/input.dart';
 import 'package:fcm_ios_and_android/controller.dart';
 import 'package:fcm_ios_and_android/services/api_service.dart';
-import 'package:fcm_ios_and_android/widgets/input_label.dart';
 import 'package:fcm_ios_and_android/widgets/bottom_navigation.dart';
-import 'package:fcm_ios_and_android/widgets/home_screen_card.dart';
+import 'package:fcm_ios_and_android/components/home_screen_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -29,6 +22,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final sampleNotifications = [
+      {
+        'imageUrl': 'assets/baby.png',
+        'title': 'AI 알림 1',
+        'content': '이것은 첫 번째 알림 내용입니다. 두 줄 이상은 잘립니다.',
+        'receivedTime': now.subtract(const Duration(minutes: 5)),
+      },
+      {
+        'imageUrl': 'assets/dog.png',
+        'title': 'AI 알림 2',
+        'content': '두 번째 알림입니다. 텍스트가 길 경우 자동 줄바꿈됩니다.',
+        'receivedTime': now.subtract(const Duration(hours: 1)),
+      },
+    ];
+
+    sampleNotifications.sort((a, b) =>
+        (b['receivedTime'] as DateTime).compareTo(a['receivedTime'] as DateTime));
+
     return Scaffold(
       appBar: AppBar(title: const Text('AI 알림')),
       body: Column(
@@ -36,20 +48,16 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 16),
-              children: const [
-                HomeScreenCard(
-                  imageUrl: 'assets/baby.png',
-                  title: 'AI 알림 1',
-                  content: '이것은 첫 번째 알림 내용입니다. 두 줄 이상은 잘립니다.',
-                  receivedTime: '5분 전',
+              children: sampleNotifications
+                  .map(
+                    (data) => HomeScreenCard(
+                  imageUrl: data['imageUrl'] as String,
+                  title: data['title'] as String,
+                  content: data['content'] as String,
+                  receivedTime: data['receivedTime'] as DateTime,
                 ),
-                HomeScreenCard(
-                  imageUrl: 'assets/dog.png',
-                  title: 'AI 알림 2',
-                  content: '두 번째 알림입니다. 텍스트가 길 경우 자동 줄바꿈됩니다.',
-                  receivedTime: '1시간 전',
-                ),
-              ],
+              )
+                  .toList(),
             ),
           ),
           Padding(
@@ -78,4 +86,4 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-  }
+}

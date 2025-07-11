@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
@@ -5,6 +6,8 @@ import 'package:fcm_ios_and_android/controller.dart';
 import 'package:fcm_ios_and_android/services/api_service.dart';
 import 'package:fcm_ios_and_android/widgets/bottom_navigation.dart';
 import 'package:fcm_ios_and_android/components/home_screen_card.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,61 +23,70 @@ class _HomeScreenState extends State<HomeScreen> {
   final ApiService apiService = ApiService();
   final said = '0709111759';
 
+  List<Map<String, dynamic>> notifications = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchNotifications();
+    _setupFCMListener();
+  }
+
+  void _setupFCMListener() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      _fetchNotifications();
+    });
+  }
+
+  Future<void> _fetchNotifications() async {
+    try {
+      final response = await apiService.receiveNotification(said: said);
+      if (response != null) {
+        final List<dynamic> data = json.decode(response);
+        final parsed = data.map<Map<String, dynamic>>((item) {
+          final type = item['type'];
+          final regDate = DateTime.parse(item['reg_date']);
+          return {
+            'type': type,
+            'title': item['title'],
+            'content': item['message'],
+            'receivedTime': regDate,
+          };
+        }).toList();
+
+        parsed.sort((a, b) =>
+            (b['receivedTime'] as DateTime).compareTo(a['receivedTime'] as DateTime));
+
+        setState(() {
+          notifications = parsed;
+        });
+      }
+    } catch (e) {
+      print('알림 불러오기 실패: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final sampleNotifications = [
-      {
-        'imageUrl': 'assets/baby.png',
-        'title': 'AI 알림 1',
-        'content': '이것은 첫 번째 알림 내용입니다. 두 줄 이상은 잘립니다.',
-        'receivedTime': now.subtract(const Duration(minutes: 5)),
-      },
-      {
-        'imageUrl': 'assets/dog.png',
-        'title': 'AI 알림 2',
-        'content': '두 번째 알림입니다. 텍스트가 길 경우 자동 줄바꿈됩니다.',
-        'receivedTime': now.subtract(const Duration(hours: 1)),
-      },
-    ];
-
-    sampleNotifications.sort((a, b) =>
-        (b['receivedTime'] as DateTime).compareTo(a['receivedTime'] as DateTime));
-
     return Scaffold(
       appBar: AppBar(title: const Text('AI 알림')),
       body: Column(
         children: [
           Expanded(
-            child: ListView(
+            child: notifications.isEmpty
+                ? const Center(child: Text('알림이 없습니다.'))
+                : ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 16),
-              children: sampleNotifications
-                  .map(
-                    (data) => HomeScreenCard(
-                  imageUrl: data['imageUrl'] as String,
-                  title: data['title'] as String,
-                  content: data['content'] as String,
-                  receivedTime: data['receivedTime'] as DateTime,
-                ),
-              )
-                  .toList(),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () async {
-                await apiService.receiveNotification(said: said);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('알림 요청을 보냈습니다')),
+              itemCount: notifications.length,
+              itemBuilder: (context, index) {
+                final item = notifications[index];
+                return HomeScreenCard(
+                  type: item['type'],
+                  title: item['title'],
+                  content: item['content'],
+                  receivedTime: item['receivedTime'],
                 );
               },
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(48),
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('알림 요청하기'),
             ),
           ),
         ],

@@ -71,12 +71,25 @@ class _SettingScreenState extends State<SettingScreen> {
     final said = saidController.text.trim();
 
     if (controller.fcmToken.isNotEmpty && said.isNotEmpty) {
-      await apiService.sendToken(said: said);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Token sent to server')),
-        );
-      }
+      final success = await apiService.sendToken(said: said);
+
+      if (!mounted) return;
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(success ? '전송 완료' : '전송 실패'),
+          content: Text(success
+              ? '서버로 토큰을 성공적으로 전송했습니다.'
+              : '토큰 전송에 실패했습니다. 다시 시도해주세요.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('확인'),
+            ),
+          ],
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('FCM Token 또는 SAID가 비어있습니다')),
@@ -108,48 +121,7 @@ class _SettingScreenState extends State<SettingScreen> {
             const SizedBox(height: 20),
             Button(onPressed: _sendToken, text: 'send'),
             const SizedBox(height: 30),
-            Text(
-              'SAID / Token',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 10),
-            FutureBuilder(
-              future: apiService.getTokenHistory(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                }
-
-                final data = snapshot.data;
-                if (data == null || data.isEmpty) {
-                  return const Text('저장된 이력이 없습니다.');
-                }
-
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    final entry = data[index];
-                    return Card(
-                      elevation: 2,
-                      margin: const EdgeInsets.symmetric(vertical: 6),
-                      child: ListTile(
-                        title: Text('SAID: ${entry['said']}'),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Token: ${entry['token']}'),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-
-          ],
+            ],
         ),
       ),
       bottomNavigationBar: BottomNavigation(

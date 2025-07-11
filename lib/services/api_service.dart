@@ -12,29 +12,34 @@ class ApiService {
 
 
 
-  Future<void> receiveNotification({required String said}) async {
+  Future<String?> receiveNotification({required String said}) async {
     try {
-      final response = await http.get(
+      final response = await http.post(
         baseUrl,
         headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'mode': 'list',
+          'said': said,
+        }),
       );
 
       if (response.statusCode == 200) {
-        print('receive notification: ${response.body}');
+        return response.body;
       } else {
-        print('failed to receive notification: ${response.body}');
+        return 'failed to receive notification: ${response.body}';
       }
-    }catch (e) {
+    } catch (e) {
       print('Error: $e');
+      return 'Error: $e';
     }
   }
 
-  Future<void> sendToken({ required String said }) async {
+
+  Future<bool> sendToken({ required String said }) async {
     final prefs = await SharedPreferences.getInstance();
     final token = controller.fcmToken.value;
     final type = controller.type.value;
-    final rawLists =prefs.getStringList(_key) ?? [];
-
+    final rawLists = prefs.getStringList(_key) ?? [];
 
     try {
       final response = await http.post(
@@ -53,17 +58,21 @@ class ApiService {
         'said' : said,
       };
 
-       if (response.statusCode == 200) {
+      if (response.statusCode == 200) {
         print('Token saved on server successfully: ${response.body}');
         rawLists.add(json.encode(entry));
         await prefs.setStringList(_key, rawLists);
+        return true;
       } else {
         print('Failed to save token: ${response.body}');
+        return false;
       }
     } catch (e) {
       print('Error occurred while sending token: $e');
+      return false;
     }
   }
+
 
   Future<List<Map<String, dynamic>>> getTokenHistory() async {
     final prefs = await SharedPreferences.getInstance();

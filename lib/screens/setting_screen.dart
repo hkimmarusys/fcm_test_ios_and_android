@@ -29,7 +29,6 @@ class _SettingScreenState extends State<SettingScreen> {
     super.initState();
     _setupFCMForegroundListener();
 
-    // FCM 토큰 초기화 및 변경 시 업데이트
     fcmTokenController.text = controller.fcmToken.value;
     ever(controller.fcmToken, (token) {
       fcmTokenController.text = token;
@@ -97,31 +96,47 @@ class _SettingScreenState extends State<SettingScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('AI 알림')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            const InputLabel(name: 'SAID'),
-            Input(
-              controller: saidController,
-              hint: 'SAID 입력',
-            ),
-            const SizedBox(height: 16),
-            const InputLabel(name: 'FCM Token'),
-            Input(
-              controller: fcmTokenController,
-              hint: 'FCM Token',
-              readonly: true,
-            ),
-            const SizedBox(height: 20),
-            Button(onPressed: _sendToken, text: 'send'),
-            const SizedBox(height: 30),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Obx(() => controller.said.value.isNotEmpty
+                  ? Padding(
+                padding: const EdgeInsets.only(bottom: 12.0),
+                child: Text(
+                  '현재 등록된 SAID: ${controller.said.value}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              )
+                  : const SizedBox.shrink()),
+              const InputLabel(name: 'SAID'),
+              Input(
+                controller: saidController,
+                hint: 'SAID 입력',
+              ),
+              const SizedBox(height: 16),
+              const InputLabel(name: 'FCM Token'),
+              Input(
+                controller: fcmTokenController,
+                hint: 'FCM Token',
+                readonly: true,
+              ),
+              const SizedBox(height: 20),
+              Button(onPressed: _sendToken, text: 'send'),
+              const SizedBox(height: 30),
             ],
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigation(

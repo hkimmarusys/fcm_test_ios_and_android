@@ -21,7 +21,6 @@ class _HomeScreenState extends State<HomeScreen> {
   FlutterLocalNotificationsPlugin();
   final MainController controller = Get.find<MainController>();
   final ApiService apiService = ApiService();
-  final said = '0709111759';
 
   List<Map<String, dynamic>> notifications = [];
 
@@ -39,18 +38,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _fetchNotifications() async {
+    var said = controller.said.value;
     try {
-      final response = await apiService.receiveNotification(said: said);
+      final response = await apiService.fetchNotification(said: said);
       if (response != null) {
         final List<dynamic> data = json.decode(response);
         final parsed = data.map<Map<String, dynamic>>((item) {
-          final type = item['type'];
-          final regDate = DateTime.parse(item['reg_date']);
           return {
-            'type': type,
+            'type': item['type'],
             'title': item['title'],
             'content': item['message'],
-            'receivedTime': regDate,
+            'receivedTime': DateTime.parse(item['reg_date']),
           };
         }).toList();
 

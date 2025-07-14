@@ -12,7 +12,7 @@ class ApiService {
 
 
 
-  Future<String?> receiveNotification({required String said}) async {
+  Future<String?> fetchNotification({required String said}) async {
     try {
       final response = await http.post(
         baseUrl,
@@ -24,6 +24,7 @@ class ApiService {
       );
 
       if (response.statusCode == 200) {
+        print('${response.body}');
         return response.body;
       } else {
         return 'failed to receive notification: ${response.body}';
@@ -60,10 +61,22 @@ class ApiService {
 
       if (response.statusCode == 200) {
         print('Token saved on server successfully: ${response.body}');
+
+        rawLists.removeWhere((item) {
+          final map = json.decode(item) as Map<String, dynamic>;
+          return map['token'] == token;
+        });
+
         rawLists.add(json.encode(entry));
         await prefs.setStringList(_key, rawLists);
+
+        await prefs.setString('saved_said', said);
+
+        controller.said.value = said;
+
         return true;
-      } else {
+      }
+else {
         print('Failed to save token: ${response.body}');
         return false;
       }

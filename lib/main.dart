@@ -10,6 +10,7 @@ import 'controller.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'dart:io';
+import 'package:fcm_ios_and_android/controller.dart';
 
 
 // FlutterLocalNotificationsPlugin 인스턴스
@@ -42,8 +43,10 @@ Future<void> main() async {
   final token = await messaging.getToken();
   if (token != null) {
     controller.fcmToken.value = token;
-    print("FCM Token: $token");
+
+    await controller.loadSaidForCurrentToken();
   }
+
   await _loadDeviceInfo(controller);
 
 

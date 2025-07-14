@@ -24,13 +24,11 @@ class ApiService {
       );
 
       if (response.statusCode == 200) {
-        print('${response.body}');
         return response.body;
       } else {
-        return 'failed to receive notification: ${response.body}';
+        return 'failed to fetch notification: ${response.body}';
       }
     } catch (e) {
-      print('Error: $e');
       return 'Error: $e';
     }
   }
@@ -60,7 +58,6 @@ class ApiService {
       };
 
       if (response.statusCode == 200) {
-        print('Token saved on server successfully: ${response.body}');
 
         rawLists.removeWhere((item) {
           final map = json.decode(item) as Map<String, dynamic>;
@@ -70,21 +67,17 @@ class ApiService {
         rawLists.add(json.encode(entry));
         await prefs.setStringList(_key, rawLists);
 
-        await prefs.setString('saved_said', said);
-
         controller.said.value = said;
 
         return true;
-      }
-else {
-        print('Failed to save token: ${response.body}');
+      } else {
         return false;
       }
     } catch (e) {
-      print('Error occurred while sending token: $e');
       return false;
     }
   }
+
 
 
   Future<List<Map<String, dynamic>>> getTokenHistory() async {

@@ -12,30 +12,20 @@ class MainController extends GetxController {
 
   static const _key = 'token_history';
 
-  @override
-  void onInit() {
-    super.onInit();
-    _loadSaidForCurrentToken();
-  }
-
-  Future<void> _loadSaidForCurrentToken() async {
+  Future<void> loadSaidForCurrentToken() async {
     final prefs = await SharedPreferences.getInstance();
-    final rawList = prefs.getStringList(_key) ?? [];
     final token = fcmToken.value;
+    if (token.isEmpty) return;
+
+    final rawList = prefs.getStringList(_key) ?? [];
 
     for (final item in rawList) {
-      try {
-        final map = json.decode(item) as Map<String, dynamic>;
-        if (map['token'] == token) {
-          said.value = map['said'] ?? "";
-          print("Loaded SAID for current token: ${said.value}");
-          return;
-        }
-      } catch (e) {
-        print('Failed to decode stored token entry: $e');
+      final map = json.decode(item) as Map<String, dynamic>;
+      if (map['token'] == token) {
+        said.value = map['said'] ?? '';
+        break;
       }
     }
-    said.value = "";
   }
 
   void changePage(int index) {

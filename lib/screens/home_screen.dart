@@ -60,7 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     } catch (e) {
-      print('알림 불러오기 실패: $e');
     }
   }
 

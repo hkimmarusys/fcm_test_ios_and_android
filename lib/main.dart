@@ -36,6 +36,16 @@ Future<void> main() async {
   // MainController 전역 등록
   final controller = Get.put(MainController());
 
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    try {
+      final controller = Get.find<MainController>();
+      controller.changePage(0);
+    } catch (e) {
+      print("MainController not found: $e");
+    }
+  });
+
+
   // FCM 초기화
   final messaging = FirebaseMessaging.instance;
   await messaging.requestPermission();

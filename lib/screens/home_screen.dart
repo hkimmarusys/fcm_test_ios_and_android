@@ -16,7 +16,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   FlutterLocalNotificationsPlugin();
   final MainController controller = Get.find<MainController>();
@@ -27,8 +27,28 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
+    // 라이프사이클 옵저버 등록
+    WidgetsBinding.instance.addObserver(this);
+
     _fetchNotifications();
     _setupFCMListener();
+  }
+
+  @override
+  void dispose() {
+    // 옵저버 해제
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  // 앱 라이프사이클 상태 변화 감지
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // 앱이 백그라운드 → 포그라운드 전환 시 알림 새로고침
+      _fetchNotifications();
+    }
   }
 
   void _setupFCMListener() {
@@ -60,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     } catch (e) {
+      // 예외처리 (로그 출력 등)
     }
   }
 

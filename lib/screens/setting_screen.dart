@@ -77,21 +77,21 @@ class _SettingScreenState extends State<SettingScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(success ? '전송 완료' : '전송 실패'),
+          title: Text(success ? 'Send Success' : 'Send Failure'),
           content: Text(success
-              ? '서버로 토큰을 성공적으로 전송했습니다.'
-              : '토큰 전송에 실패했습니다. 다시 시도해주세요.'),
+              ? 'FCM token has been sent successfully.'
+              : 'Failed to send FCM token. Please try again.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('확인'),
+              child: const Text('OK'),
             ),
           ],
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('FCM Token 또는 SAID가 비어있습니다')),
+        const SnackBar(content: Text('FCM Token or SAID is missing')),
       );
     }
   }
@@ -99,7 +99,7 @@ class _SettingScreenState extends State<SettingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('AI 알림')),
+      appBar: AppBar(title: const Text('AI Settings')),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -111,7 +111,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   ? Padding(
                 padding: const EdgeInsets.only(bottom: 12.0),
                 child: Text(
-                  '현재 등록된 SAID: ${controller.said.value}',
+                  'Current registered SAID: ${controller.said.value}',
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.grey,
@@ -123,7 +123,7 @@ class _SettingScreenState extends State<SettingScreen> {
               const InputLabel(name: 'SAID'),
               Input(
                 controller: saidController,
-                hint: 'SAID 입력',
+                hint: 'Enter SAID',
               ),
               const SizedBox(height: 16),
               const InputLabel(name: 'FCM Token'),
@@ -133,7 +133,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 readonly: true,
               ),
               const SizedBox(height: 20),
-              Button(onPressed: _sendToken, text: 'send'),
+              Button(onPressed: _sendToken, text: 'Send'),
               const SizedBox(height: 30),
             ],
           ),

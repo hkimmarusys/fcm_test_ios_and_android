@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'firebase_options.dart';
 import 'screens/home_screen.dart';
 import 'screens/setting_screen.dart';
-import 'screens/statistic_screen.dart';
+import 'screens/analysis_screen.dart';
 import 'controller.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -89,7 +89,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/home',
       getPages: [
         GetPage(name: '/home', page: () => const HomeScreen()),
-        GetPage(name: '/search', page: () => const SearchScreen()),
+        GetPage(name: '/analysis', page: () => const AnalysisScreen()),
         GetPage(name: '/setting', page: () => const SettingScreen()),
       ],
     );

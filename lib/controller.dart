@@ -37,8 +37,8 @@ class MainController extends GetxController {
           break;
         }
       case 1:
-        if (Get.currentRoute != '/search') {
-          Get.offAllNamed('/search');
+        if (Get.currentRoute != '/analysis') {
+          Get.offAllNamed('/analysis');
           break;
         }
       case 2:

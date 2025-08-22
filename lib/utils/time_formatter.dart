@@ -3,10 +3,10 @@ import 'package:intl/intl.dart';
 String formatTimeAgo(DateTime dateTime) {
   final diff = DateTime.now().difference(dateTime);
 
-  if (diff.inMinutes < 1) return '방금 전';
-  if (diff.inMinutes < 60) return '${diff.inMinutes}분 전';
-  if (diff.inHours < 24) return '${diff.inHours}시간 전';
-  return '${diff.inDays}일 전';
+  if (diff.inMinutes < 1) return 'Just now';
+  if (diff.inMinutes < 60) return '${diff.inMinutes} minutes ago';
+  if (diff.inHours < 24) return '${diff.inHours} hours ago';
+  return '${diff.inDays} days ago';
 }
 
 DateTime parseRegDate(String regDate) {

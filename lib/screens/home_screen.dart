@@ -80,14 +80,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         });
       }
     } catch (e) {
-      // 예외처리 (로그 출력 등)
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('AI 알림')),
+      appBar: AppBar(title: const Text('AI Alert')),
       body: Column(
         children: [
           Expanded(

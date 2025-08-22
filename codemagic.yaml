@@ -1,30 +1,47 @@
-workflows:
-  ios_build:
-    name: iOS Build
-    max_build_duration: 60
-    environment:
-      flutter: stable
-      xcode: latest
-      cocoapods: default
-      vars:
-        LC_ALL: en_US.UTF-8
-    scripts:
+name: iOS Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    env:
+      LC_ALL: en_US.UTF-8
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+
       - name: Install dependencies
-        script: |
+        run: |
           flutter pub get
-          cd ios
+          cd nd_android/frontend/ios
           pod install
-          cd ..
+          cd ../../..
+
       - name: Analyze & Test
-        script: |
+        run: |
           flutter analyze
           flutter test
-      - name: Build iOS
-        script: |
+
+      - name: Build iOS (Release, No CodeSign)
+        run: |
+          cd nd_android/frontend/ios
           flutter build ios --release --no-codesign
-    artifacts:
-      - build/ios/ipa/*.ipa
-    publishing:
-      email:
-        recipients:
-          - hkim@marusys.com
+          cd ../../..
+
+      # IPA 아티팩트 업로드 (선택)
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-ipa
+          path: nd_android/frontend/build/ios/ipa/*.ipa
